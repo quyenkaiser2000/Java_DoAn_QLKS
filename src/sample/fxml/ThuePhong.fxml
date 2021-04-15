@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3482C6;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <ImageView fitHeight="150.0" fitWidth="336.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/SUNRISEHOTEL_LOGO.png" />
+         </image>
+      </ImageView>
+      <Label alignment="CENTER" layoutX="724.0" layoutY="14.0" prefHeight="93.0" prefWidth="472.0" text="PHIẾU THUÊ PHÒNG" textFill="WHITE">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutY="170.0" prefHeight="910.0" prefWidth="1162.0" style="-fx-background-color: white;">
+         <children>
+            <TableView prefHeight="910.0" prefWidth="1162.0">
+              <columns>
+                <TableColumn prefWidth="272.0000427365303" text="Mã thuê phòng" />
+                <TableColumn prefWidth="213.5999755859375" text="Mã nhân viên" />
+                  <TableColumn minWidth="0.0" prefWidth="349.5999755859375" text="Tên khách hàng" />
+                  <TableColumn prefWidth="331.99993896484375" text="Ngày lập" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="1150.0" layoutY="170.0" prefHeight="910.0" prefWidth="759.0" style="-fx-background-color: white;">
+         <children>
+            <Label layoutX="55.0" layoutY="94.0" prefHeight="35.0" prefWidth="173.0" text="Mã thuê phòng">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="55.0" layoutY="163.0" prefHeight="35.0" prefWidth="162.0" text="Mã nhân viên">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="55.0" layoutY="307.0" prefHeight="30.0" prefWidth="138.0" text="Ngày lập">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="55.0" layoutY="239.0" prefHeight="35.0" prefWidth="174.0" text="Tên khách hàng">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <TextField layoutX="289.0" layoutY="82.0" prefHeight="50.0" prefWidth="344.0" />
+            <Button layoutX="55.0" layoutY="754.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="149.0" text="Thêm">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/add.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="322.0" layoutY="755.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="150.0" text="Xóa">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/delete.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="574.0" layoutY="755.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="150.0" text="Sửa">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="38.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/edit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <TextField layoutX="289.0" layoutY="155.0" prefHeight="50.0" prefWidth="344.0" />
+            <TextField layoutX="289.0" layoutY="231.0" prefHeight="50.0" prefWidth="344.0" />
+            <TextField layoutX="289.0" layoutY="299.0" prefHeight="50.0" prefWidth="344.0" />
+            <Button layoutX="631.0" layoutY="9.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="138.0" text="Tìm kiếm">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="27.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/search.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <TextField layoutX="425.0" layoutY="9.0" prefHeight="35.0" prefWidth="198.0" promptText="Search" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

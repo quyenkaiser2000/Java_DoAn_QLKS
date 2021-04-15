@@ -1,0 +1,17 @@
+    .bodybg{
+        -fx-background-image: url("/sample/login.jpg");
+        -fx-background-size: 100% 100%;
+    }
+    .login{
+        -fx-text-fill: white;
+    }
+    .aa{
+        -fx-border-style: none;
+    }
+    .menu{
+        -fx-display: block;
+    }
+    .menubar{
+        -fx-padding: 20px 20px;
+
+    }
