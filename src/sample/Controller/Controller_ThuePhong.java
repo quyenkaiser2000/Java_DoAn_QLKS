@@ -139,8 +139,8 @@ public class Controller_ThuePhong implements Initializable {
                     makh = rs.getString(1);
                     gt = rs.getString(3);
                     cmnd= rs.getString(4);
-                    dc=rs.getString(6);
-                    dt=rs.getString(7);
+                    dc=rs.getString(5);
+                    dt=rs.getString(6);
                     txt_makh.setText(makh);
                     txt_cmndkh.setText(cmnd);
                     if (gt.equals("Nam")) {
@@ -194,7 +194,7 @@ public class Controller_ThuePhong implements Initializable {
     }
 
     public void female(ActionEvent event) {
-        GioiTinh = "Nam";
+        GioiTinh = "Nữ";
     }
 
     public void handleExitThuePhong(ActionEvent event) throws IOException {

@@ -83,6 +83,11 @@ public class Controller_QLPhong implements Initializable{
         loadCBLoaiPhong();
         search_QLPhong();
         setcellvalueformtableview();
+        try {
+            autoMaPhong();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     private void setCellTable(){
@@ -99,7 +104,7 @@ public class Controller_QLPhong implements Initializable{
             pst = con.prepareStatement("SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong");
             rs = pst.executeQuery();
             while(rs.next()){
-                data.add(new QLPhong(rs.getString(1),rs.getString(6),rs.getString(8),rs.getString(11)));
+                data.add(new QLPhong(rs.getString(1),rs.getString(6),rs.getString(7),rs.getString(9)));
 
             }
         }catch(SQLException ex){
@@ -181,7 +186,14 @@ public class Controller_QLPhong implements Initializable{
 
         });
     }
-
+    private void autoMaPhong() throws SQLException {
+        pst = con.prepareStatement("SELECT count(1) as MaPhong FROM PHONG");
+        rs = pst.executeQuery();
+        while(rs.next()){
+            String s = String.valueOf(rs.getInt(1)+1);
+            txt_maphong.setText("15"+s);
+        }
+    }
     public void handleAddPhong(ActionEvent event) throws SQLException {
         boolean ismaphong = Validation_TextField.isTextFieldNotEmpty(txt_maphong, error_map,"Nhập Mã!");
         if(ismaphong) {
@@ -199,7 +211,6 @@ public class Controller_QLPhong implements Initializable{
                 rs = pst.executeQuery();
                 if (rs.next()) {
                     malp = rs.getString(1);
-                    System.out.println(malp);
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
@@ -225,6 +236,7 @@ public class Controller_QLPhong implements Initializable{
                     AlertDialog.display("Thông báo", "Thêm thành công");
                     data.clear();
                     LoadDataTableView();
+                    autoMaPhong();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);

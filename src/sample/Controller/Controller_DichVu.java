@@ -16,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import sample.Dialog.AlertDialog;
+import sample.Validation.Validation_TextField;
 import sample.model.ChucVu;
 import sample.model.DichVu;
 import sample.model.NhanVien;
@@ -62,6 +63,14 @@ public class Controller_DichVu implements Initializable{
     private Button btn_exit;
     @FXML
     private AnchorPane anchorpane;
+    @FXML
+    private Label error_madv;
+
+    @FXML
+    private Label error_tendv;
+
+    @FXML
+    private Label error_dg;
 
 
 
@@ -170,33 +179,37 @@ public class Controller_DichVu implements Initializable{
     }
 
     public void handleAddDichVu(ActionEvent event) throws SQLException {
-        String sql = "Insert Into DICH_VU(MaDichVu, TenDichVu, DonViTinh, DonGia,Status) Values(?,?,?,?,?)";
-        String madv = txt_madv.getText();
-        String tendv = txt_tendv.getText();
-        Double dg = Double.valueOf(txt_dg.getText());
-        String dvt = ComboBox_dvt.getValue();
-        if(validateFields()){
-            try {
-                pst = con.prepareStatement(sql);
-                pst.setString(1,madv);
-                pst.setString(2,tendv);
-                pst.setString(3,dvt);
-                pst.setString(4,"True");
-                pst.setDouble(5,dg);
-                int i = pst.executeUpdate();
-                if(i==1){
-                    System.out.println("Data Insert Successfully");
-                    AlertDialog.display("Thông báo","Thêm thành công");
-                    data.clear();
-                    LoadDataTableView();
-                    cleardata();
+        boolean ismadv = Validation_TextField.isTextFieldNotEmpty(txt_madv, error_madv,"Nhập Mã!");
+        boolean istendv = Validation_TextField.isTextFieldNotEmpty(txt_tendv, error_tendv,"Nhập Tên!");
+        boolean isdg = Validation_TextField.isTextFieldNotEmpty(txt_dg, error_dg,"Nhập DG!");
+        if(ismadv && isdg && istendv){
+            String sql = "Insert Into DICH_VU(MaDichVu, TenDichVu, DonViTinh, DonGia,Status) Values(?,?,?,?,?)";
+            String madv = txt_madv.getText();
+            String tendv = txt_tendv.getText();
+            String dg = txt_dg.getText();
+            String dvt = ComboBox_dvt.getValue();
+
+                try {
+                    pst = con.prepareStatement(sql);
+                    pst.setString(1,madv);
+                    pst.setString(2,tendv);
+                    pst.setString(3,dvt);
+                    pst.setString(4,dg);
+                    pst.setString(5,"True");
+                    int i = pst.executeUpdate();
+                    if(i==1){
+                        System.out.println("Data Insert Successfully");
+                        AlertDialog.display("Thông báo","Thêm thành công");
+                        data.clear();
+                        LoadDataTableView();
+                        cleardata();
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE,null,ex);
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE,null,ex);
-            }
-            finally {
-                pst.close();
-            }
+                finally {
+                    pst.close();
+                }
         }
     }
 

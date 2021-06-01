@@ -122,6 +122,21 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Label fx:id="error_madv" layoutX="640.0" layoutY="94.0" prefHeight="35.0" prefWidth="173.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_tendv" layoutX="650.0" layoutY="163.0" prefHeight="35.0" prefWidth="173.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_dg" layoutX="650.0" layoutY="307.0" prefHeight="35.0" prefWidth="173.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
             </children>
         </AnchorPane>
     </children>

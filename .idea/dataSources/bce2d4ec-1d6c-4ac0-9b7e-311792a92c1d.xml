@@ -353,6 +353,7 @@
     </table>
     <table id="63" parent="45" name="CHI_TIET_PHIEU_THUE_PHONG">
       <ObjectId>613577224</ObjectId>
+      <Outdated>1</Outdated>
       <CreatedTimestamp>2021-05-12.15:11:50.473</CreatedTimestamp>
       <ModifiedTimestamp>2021-05-12.15:11:53.490</ModifiedTimestamp>
     </table>
@@ -374,6 +375,7 @@
     </table>
     <table id="67" parent="45" name="KHACH_HANG">
       <ObjectId>741577680</ObjectId>
+      <Outdated>1</Outdated>
       <CreatedTimestamp>2021-05-12.15:11:50.537</CreatedTimestamp>
       <ModifiedTimestamp>2021-05-12.15:11:53.537</ModifiedTimestamp>
     </table>
@@ -394,6 +396,7 @@
     </table>
     <table id="71" parent="45" name="PHIEU_THUE_PHONG">
       <ObjectId>869578136</ObjectId>
+      <Outdated>1</Outdated>
       <CreatedTimestamp>2021-05-12.15:11:51.097</CreatedTimestamp>
       <ModifiedTimestamp>2021-05-14.18:37:59.477</ModifiedTimestamp>
     </table>

@@ -74,7 +74,7 @@ public class Controller_ChonPhong implements Initializable {
             pst = con.prepareStatement("SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong AND TenLoaiTinhTrangPhong LIKE N'%Phòng trống%'");
             rs = pst.executeQuery();
             while (rs.next()) {
-                data.add(new ChonPhong(rs.getString(1), rs.getString(6), rs.getString(8)));
+                data.add(new ChonPhong(rs.getString(1), rs.getString(6), rs.getString(7)));
 
             }
         } catch (SQLException ex) {

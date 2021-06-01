@@ -275,6 +275,7 @@ public class Controller_NhanVien implements Initializable {
                         data.clear();
                         LoadDataTableView();
                         cleardata();
+                        autoMa();
 
                     }
 
