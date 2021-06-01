@@ -4,21 +4,26 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 
 import javafx.scene.control.cell.PropertyValueFactory;
-import sample.model.ChucVu;
-import sample.model.QLPhong;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import sample.Dialog.AlertDialog;
+import sample.Validation.Validation_TextField;
+import sample.model.*;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,37 +34,23 @@ public class Controller_QLPhong implements Initializable{
     private PreparedStatement pst = null;
     private ResultSet rs = null;
     private ObservableList<QLPhong> data;
-    private ObservableList<ChucVu> cv;
+    private ObservableList<LoaiPhong> datalp;
+    private ObservableList<LoaiTinhTrangPhong> datalttp;
+
 
     @FXML
-    private TextField txt_manv;
+    private ComboBox<String> combobox_tinhtrangphong;
 
     @FXML
-    private Button btn_add;
-
+    private ComboBox<String> combobox_loaiphong;
     @FXML
-    private TextField txt_macv;
-
+    private TextField txt_search;
     @FXML
-    private TextField txt_tennv;
-
+    private TextField txt_maphong;
     @FXML
-    private DatePicker dt_ns;
-
+    private AnchorPane anchorpane;
     @FXML
-    private TextField txt_dc;
-
-    @FXML
-    private TextField txt_sdt;
-
-    @FXML
-    private ComboBox<ChucVu> cb_cv;
-
-    @FXML
-    private CheckBox txt_nam;
-
-    @FXML
-    private CheckBox txt_nu;
+    private Label error_map;
 
 
 
@@ -84,10 +75,14 @@ public class Controller_QLPhong implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         con = sample.DBConnection.qlksConnection();
         data = FXCollections.observableArrayList();
-        cv = FXCollections.observableArrayList();
+        datalp= FXCollections.observableArrayList();
         setCellTable();
         LoadDataTableView();
         //loadCBCV();
+        loadCBTinhTrangPhong();
+        loadCBLoaiPhong();
+        search_QLPhong();
+        setcellvalueformtableview();
     }
 
     private void setCellTable(){
@@ -101,10 +96,10 @@ public class Controller_QLPhong implements Initializable{
 
     private void LoadDataTableView(){
         try{
-            pst = con.prepareStatement("SELECT * FROM PHONG");
+            pst = con.prepareStatement("SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong");
             rs = pst.executeQuery();
             while(rs.next()){
-                data.add(new QLPhong(rs.getString(1)));
+                data.add(new QLPhong(rs.getString(1),rs.getString(6),rs.getString(8),rs.getString(11)));
 
             }
         }catch(SQLException ex){
@@ -114,62 +109,188 @@ public class Controller_QLPhong implements Initializable{
         table_info.setItems(data);
 
     }
-    /*public void loadCBCV(){
-        try{
-            pst = con.prepareStatement("SELECT * FROM CHUC_VU");
-            rs = pst.executeQuery();
-            while(rs.next()){
-
-                cv.add(new ChucVu(rs.getString(2).toString()));
-            }
-        }catch(SQLException ex){
-            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE,null,ex);
-        }
-        cb_cv.setItems(cv);
-
-    }*/
-    private void handleAddNhanVien(ActionEvent event) throws SQLException {
-        String sql = "Insert Into NHAN_VIEN(MaNhanVien, MaChucVu, HoTen, NgaySinh, GioiTinh, DiaChi, SoDienThoai, ChucVu) Values(?,?,?,?,?,?,?,?)";
-        String manv = txt_manv.getText();
-        String macv = txt_macv.getText();
-        String tennv = txt_tennv.getText();
-        String ns = dt_ns.getValue().toString();
-        if(txt_nam.isSelected()){
-            String gt =txt_nam.getText();
-        }
-        if(txt_nu.isSelected()){
-            String gt =txt_nu.getText();
-        }
-        String dc = txt_dc.getText();
-        String sdt = txt_sdt.getText();
-        /*String cv = txt_cv.getText();*/
+    private void loadCBLoaiPhong() {
         try {
+            List<String> options = new ArrayList<>();
+            pst = con.prepareStatement("SELECT * FROM LOAI_PHONG");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("TenLoaiPhong");
+                options.add(name);
+            }
+
+            combobox_loaiphong.setItems(FXCollections.observableArrayList(options));
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    private void loadCBTinhTrangPhong() {
+        try {
+            List<String> options = new ArrayList<>();
+            pst = con.prepareStatement("SELECT * FROM LOAI_TINH_TRANG");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("TenLoaiTinhTrangPhong");
+                options.add(name);
+            }
+
+            combobox_tinhtrangphong.setItems(FXCollections.observableArrayList(options));
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private void setcellvalueformtableview() {
+        table_info.setOnMouseClicked(e -> {
+            QLPhong p1 = table_info.getItems().get(table_info.getSelectionModel().getFocusedIndex());
+            txt_maphong.setText(p1.getMap());
+
+            // txt_nam.setSelected(p1.getGt());
+            // txt_nu.setSelected(p1.getGt());
+            combobox_loaiphong.setValue(p1.getTlp());
+            combobox_tinhtrangphong.setValue(p1.getTtp());
+        });
+    }
+
+    private void search_QLPhong(){
+        txt_search.setOnKeyReleased(e->{
+            if(txt_search.getText().equals(""))    {
+                LoadDataTableView();
+            }
+            else{
+                data.clear();
+                String sql = "SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong AND MaPhong LIKE N'%"+txt_search.getText()+"%'"
+                        +"UNION SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong AND TenLoaiPhong LIKE N'%"+txt_search.getText()+"%'";
+                try{
+                    pst = con.prepareStatement(sql);
+                    rs= pst.executeQuery();
+                    while(rs.next()) {
+                        data.add(new QLPhong(rs.getString(1),rs.getString(6),rs.getString(8),rs.getString(11)));
+
+                    }
+
+                    table_info.setItems(data);
+                }catch (SQLException ex){
+                    Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        });
+    }
+
+    public void handleAddPhong(ActionEvent event) throws SQLException {
+        boolean ismaphong = Validation_TextField.isTextFieldNotEmpty(txt_maphong, error_map,"Nhập Mã!");
+        if(ismaphong) {
+            String sql = "Insert Into PHONG(MaPhong,MaLoaiPhong,MaLoaiTinhTrangPhong) Values(?,?,?)";
+            //String sql1 = "Insert Into PHONG(MaLoaiPhong) Values(?)";
+            // String sql2 = "Insert Into PHONG(MaLoaiTinhTrangPhong) Values(?)";
+            String mp = txt_maphong.getText();
+            String malp = null;
+            String mattlp = null;
+            String mlp = "select MaLoaiPhong from LOAI_PHONG where TenLoaiPhong LIKE N'%" + combobox_loaiphong.getValue() + "%'";
+
+            String mlttp = "select MaLoaiTinhTrangPhong from LOAI_TINH_TRANG where TenLoaiTinhTrangPhong LIKE N'%" + combobox_tinhtrangphong.getValue() + "%'";
+            try {
+                pst = con.prepareStatement(mlp);
+                rs = pst.executeQuery();
+                if (rs.next()) {
+                    malp = rs.getString(1);
+                    System.out.println(malp);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                pst = con.prepareStatement(mlttp);
+                rs = pst.executeQuery();
+                if (rs.next()) {
+                    mattlp = rs.getString(1);
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                pst = con.prepareStatement(sql);
+                pst.setString(1, mp);
+                pst.setString(2, malp);
+                pst.setString(3, mattlp);
+                int i = pst.executeUpdate();
+                if (i == 1) {
+                    System.out.println("Data Insert Successfully");
+                    AlertDialog.display("Thông báo", "Thêm thành công");
+                    data.clear();
+                    LoadDataTableView();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            finally {
+                pst.close();
+            }
+        }
+
+
+
+
+    }
+
+    public void handleUpdatePhong(ActionEvent event) {
+        String sql = "Update PHONG  set MaLoaiPhong = ?, MaLoaiTinhTrangPhong = ? WHERE MaPhong = ? ";
+        String map = txt_maphong.getText();
+        String malp = null;
+        String mattlp = null;
+        String mlp = "select MaLoaiPhong from LOAI_PHONG where TenLoaiPhong LIKE N'%"+combobox_loaiphong.getValue()+"%'";
+
+        String mlttp = "select MaLoaiTinhTrangPhong from LOAI_TINH_TRANG where TenLoaiTinhTrangPhong LIKE N'%"+combobox_tinhtrangphong.getValue()+"%'";
+        try{
+            pst = con.prepareStatement(mlp);
+            rs= pst.executeQuery();
+            if(rs.next()) {
+                malp = rs.getString(1);
+            }
+        }catch (SQLException ex){
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try{
+            pst = con.prepareStatement(mlttp);
+            rs= pst.executeQuery();
+            if(rs.next()) {
+                mattlp = rs.getString(1);
+            }
+
+        }catch (SQLException ex){
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try{
             pst = con.prepareStatement(sql);
-            pst.setString(1,manv);
-            pst.setString(2,macv);
-            pst.setString(3,tennv);
-            pst.setString(4,ns);
-            //pst.setString(5,);
-            pst.setString(6,dc);
-            pst.setString(7,sdt);
-            //pst.setString(1,manv);
+            pst.setString(1,malp);
+            pst.setString(2, mattlp);
+            pst.setString(3, map);
             int i = pst.executeUpdate();
-            if(i==1){
+            if (i == 1) {
                 System.out.println("Data Insert Successfully");
+                data.clear();
+                LoadDataTableView();
+                AlertDialog.display("Thông báo","Update thành công");
+                //done - them mot cai nua la khi update thanh cong, update lai tableview de hien thi data nhan vien
+
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE,null,ex);
-        }
-        finally {
-            pst.close();
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    /*public void checkbox(ActionEvent event){
-        if(txt_nam.isSelected()){
-            String gt = txt_nam.getText();
-        }
 
-    }*/
+    public void handleExitPhong(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("../fxml/trangchu.fxml"));
+        Stage stage =   (Stage) anchorpane.getScene().getWindow();
+
+        stage.close();
+    }
 }
 //select*from PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C
 //where A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong

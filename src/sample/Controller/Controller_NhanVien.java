@@ -2,26 +2,38 @@ package sample.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import sample.Dialog.AlertDialog;
+import sample.Validation.Validation_TextField;
 import sample.model.ChucVu;
 import sample.model.NhanVien;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Controller_NhanVien implements Initializable {
 
@@ -65,6 +77,8 @@ public class Controller_NhanVien implements Initializable {
     private CheckBox txt_nu;
     @FXML
     private TextField txt_search;
+    @FXML
+    private AnchorPane anchorpane;
 
 
     @FXML
@@ -93,7 +107,24 @@ public class Controller_NhanVien implements Initializable {
 
     @FXML
     private TableColumn<?, ?> col_cv;
+    @FXML
+    private Label error_manv;
 
+    @FXML
+    private Label error_tennv;
+
+    @FXML
+    private Label error_ns;
+
+    @FXML
+    private Label error_dc;
+
+    @FXML
+    private Label error_sdt;
+    @FXML
+    private Label error_gt;
+    @FXML
+    private Label error_cv;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         con = sample.DBConnection.qlksConnection();
@@ -104,6 +135,11 @@ public class Controller_NhanVien implements Initializable {
         loadCBCV();
         setcellvalueformtableview();
         search_NhanVien();
+        try {
+            autoMa();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     private void setCellTable() {
@@ -115,15 +151,14 @@ public class Controller_NhanVien implements Initializable {
         col_gt.setCellValueFactory(new PropertyValueFactory<>("gt"));
         col_dc.setCellValueFactory(new PropertyValueFactory<>("dc"));
         col_sdt.setCellValueFactory(new PropertyValueFactory<>("sdt"));
-        col_cv.setCellValueFactory(new PropertyValueFactory<>("cv"));
     }
 
     private void LoadDataTableView() {
         try {
-            pst = con.prepareStatement("SELECT MaNhanVien, MaChucVu, HoTen, FORMAT (NgaySinh, 'dd/MM/yyyy'), GioiTinh, DiaChi, SoDienThoai, TenChucVu FROM NHAN_VIEN");
+            pst = con.prepareStatement("SELECT MaNhanVien, MaChucVu, HoTen, FORMAT (NgaySinh, 'dd/MM/yyyy'), GioiTinh, DiaChi, SoDienThoai FROM NHAN_VIEN");
             rs = pst.executeQuery();
             while (rs.next()) {
-                data.add(new NhanVien(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7),rs.getString(8)));
+                data.add(new NhanVien(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)));
 
             }
         } catch (SQLException ex) {
@@ -153,10 +188,9 @@ public class Controller_NhanVien implements Initializable {
     private void setcellvalueformtableview() {
         table_info.setOnMouseClicked(e -> {
             NhanVien p1 = table_info.getItems().get(table_info.getSelectionModel().getFocusedIndex());
-            txt_macv.setText(p1.getMacv());
+            txt_manv.setText(p1.getManv());
             txt_tennv.setText(p1.getTennv());
             txt_sdt.setText(p1.getSdt());
-            txt_manv.setText(p1.getManv());
             txt_dc.setText(p1.getDc());
 
             //ngày tháng năm
@@ -174,56 +208,96 @@ public class Controller_NhanVien implements Initializable {
                 txt_nu.setSelected(true);
             }
 
-            // txt_nam.setSelected(p1.getGt());
-            // txt_nu.setSelected(p1.getGt());
-            ComboBox_name.setValue(p1.getCv());
+            String macv = null;
+            String sqlmakh = "SELECT TenChucVu FROM NHAN_VIEN WHERE MaNhanVien LIKE N'"+txt_manv.getText()+"'";
+            try{
+                pst = con.prepareStatement(sqlmakh);
+                rs= pst.executeQuery();
+                if(rs.next()) {
+                    macv = rs.getString(1);
+                    ComboBox_name.setValue(macv);
+
+                }
+            }catch (SQLException ex) {
+                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
+    }
+    private void autoMa() throws SQLException {
+        pst = con.prepareStatement("SELECT count(1) as MaNhanVIen FROM NHAN_VIEN");
+        rs = pst.executeQuery();
+        while(rs.next()){
+            String s = String.valueOf(rs.getInt(1)+1);
+            txt_manv.setText("NV0"+s);
+        }
     }
     @FXML
     private void handleAddNhanVien(ActionEvent event) throws SQLException {
+        boolean ismanv = Validation_TextField.isTextFieldNotEmpty(txt_manv, error_manv,"Nhập Mã!");
+        boolean istennv = Validation_TextField.isTextFieldNotEmpty(txt_tennv, error_tennv,"Nhập Tên!");
+        boolean isns = Validation_TextField.isTextFieldNotEmpty(dt_ns.getEditor(), error_ns,"Nhập NS!");
+        boolean isdc = Validation_TextField.isTextFieldNotEmpty(txt_dc, error_dc,"Nhập DC!");
+        boolean issdt = Validation_TextField.isTextFieldNotEmpty(txt_sdt, error_sdt,"Nhập SDT!");
 
-        String sql = "Insert Into NHAN_VIEN(MaNhanVien, MaChucVu, HoTen, NgaySinh, GioiTinh, DiaChi, SoDienThoai,TenChucVu) Values(?,?,?,?,?,?,?,?)";
-        String manv = txt_manv.getText();
-        String macv = txt_macv.getText();
-        String tennv = txt_tennv.getText();
-        String ns = dt_ns.getEditor().getText();
+        if(ismanv && istennv && isns && isdc && issdt){
+            String sql = "Insert Into NHAN_VIEN(MaNhanVien,MaChucVu, HoTen, NgaySinh, GioiTinh, DiaChi, SoDienThoai) Values(?,?,?,?,?,?,?)";
+            String manv = txt_manv.getText();
+            String tennv = txt_tennv.getText();
+            String ns = dt_ns.getEditor().getText();
+            String dc = txt_dc.getText();
+            String sdt = txt_sdt.getText();
 
-        String dc = txt_dc.getText();
-        String sdt = txt_sdt.getText();
-        String cv = ComboBox_name.getValue();
-        try {
-            pst = con.prepareStatement(sql);
-            pst.setString(1, manv);
-            pst.setString(2, macv);
-            pst.setString(3, tennv);
-            pst.setString(4, ns);
-            pst.setString(5, GioiTinh);
-            pst.setString(6, dc);
-            pst.setString(7, sdt);
-            pst.setString(8, cv);
-            int i = pst.executeUpdate();
-            if (i == 1) {
-                System.out.println("Data Insert Successfully");
-                AlertDialog.display("Thông báo","Thêm thành công");
-                data.clear();
-                LoadDataTableView();
-                cleardata();
-
+            String macv = null;
+            String mlp = "select MaChucVu from CHUC_VU where TENCHUCVU LIKE N'%"+ComboBox_name.getValue()+"%'";
+            try{
+                pst = con.prepareStatement(mlp);
+                rs= pst.executeQuery();
+                if(rs.next()) {
+                    macv = rs.getString(1);
+                }
+            }catch (SQLException ex){
+                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        } catch (SQLException ex) {
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+                try {
+                    pst = con.prepareStatement(sql);
+                    pst.setString(1,manv);
+                    pst.setString(2, macv);
+                    pst.setString(3, tennv);
+                    pst.setString(4, ns);
+                    pst.setString(5, GioiTinh);
+                    pst.setString(6, dc);
+                    pst.setString(7, sdt);
+                    int i = pst.executeUpdate();
+                    if (i == 1) {
+                        System.out.println("Data Insert Successfully");
+                        AlertDialog.display("Thông báo","Thêm thành công");
+                        data.clear();
+                        LoadDataTableView();
+                        cleardata();
 
-            pst.close();
+                    }
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                finally {
+
+                    pst.close();
+                }
         }
+
+
     }
     private void cleardata() {
         txt_dc.clear();
         txt_manv.clear();
         txt_sdt.clear();
         txt_tennv.clear();
-        dt_ns.setValue(LocalDate.now());
+        txt_nam.setSelected(false);
+        txt_nu.setSelected(false);
+        dt_ns.setValue(null);
+        dt_ns.getEditor().setText(null);
         ComboBox_name.setPromptText("");
     }
 
@@ -237,8 +311,18 @@ public class Controller_NhanVien implements Initializable {
 
     public void handleUpdateNhanVien(ActionEvent event) {
         String sql = "Update NHAN_VIEN  set  MaChucVu = ?, HoTen = ?, NgaySinh = ?, GioiTinh = ?, DiaChi = ?, SoDienThoai = ?, TenChucVu = ? WHERE MaNhanVien = ? ";
+        String macv = null;
+        String mcv = "select MaChucVu from CHUC_VU where TENCHUCVU LIKE N'%"+ComboBox_name.getValue()+"%'";
+        try{
+            pst = con.prepareStatement(mcv);
+            rs= pst.executeQuery();
+            if(rs.next()) {
+                macv = rs.getString(1);
+            }
+        }catch (SQLException ex){
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
-            String macv = txt_macv.getText();
             String manv = txt_manv.getText();
             String tennv = txt_tennv.getText();
             String ns = String.valueOf(java.sql.Date.valueOf(dt_ns.getValue()));
@@ -266,6 +350,7 @@ public class Controller_NhanVien implements Initializable {
                 System.out.println("Data Insert Successfully");
                 data.clear();
                 LoadDataTableView();
+                cleardata();
                 AlertDialog.display("Thông báo","Update thành công");
                 //done - them mot cai nua la khi update thanh cong, update lai tableview de hien thi data nhan vien
 
@@ -275,68 +360,151 @@ public class Controller_NhanVien implements Initializable {
         }
     }
 
-    public void handleDeleteNhanVien(ActionEvent event) throws SQLException {
-        String sql = "delete from NHAN_VIEN where MaNhanVien = ?";
+    /*public void handleDeleteNhanVien(ActionEvent event) throws SQLException {
 
-        try{
-            pst = con.prepareStatement(sql);
-            pst.setString(1,txt_manv.getText());
-            int i=  pst.executeUpdate();
-            if(i==1){
-                System.out.println("Data Delete Successfully");
-                AlertDialog.display("Thông báo","Xóa thành công");
-                data.clear();
-                LoadDataTableView();
-                cleardata();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure to Delete ?");
+        Optional<ButtonType> action = alert.showAndWait();
+
+
+        if (action.get() == ButtonType.OK) {
+            String sql = "delete from NHAN_VIEN where MaNhanVien = ?";
+            try {
+                pst = con.prepareStatement(sql);
+                pst.setString(1, txt_manv.getText());
+                int i = pst.executeUpdate();
+                if (i == 1) {
+                    System.out.println("Data Delete Successfully");
+                    AlertDialog.display("Thông báo", "Xóa thành công");
+                    data.clear();
+                    LoadDataTableView();
+                    cleardata();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }catch(SQLException ex){
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 
     public void search_NhanVien(ActionEvent event) {
 
     }
-    private void search_NhanVien(){
+    private void search_NhanVien() {
+        FilteredList<NhanVien> filteredData =  new FilteredList<>(data, e->true);
         txt_search.setOnKeyReleased(e->{
-            if(txt_search.getText().equals(""))    {
-                LoadDataTableView();
-            }
-            else{
-                data.clear();
-                String sql = "select *   from NHAN_VIEN where MaNhanVien LIKE N'%"+txt_search.getText()+"%'"
-                        + "UNION Select *   from NHAN_VIEN where HoTen LIKE N'%"+txt_search.getText()+"%'" ;
-                try{
-                    pst = con.prepareStatement(sql);
-                    rs= pst.executeQuery();
-                    while(rs.next()) {
-                        data.add(new NhanVien(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7),rs.getString(8)));
-
+            txt_search.textProperty().addListener(((observable, oldValue, newValue) -> {
+                filteredData.setPredicate((Predicate<? super NhanVien>) nhanvien ->{
+                    if(newValue == null || newValue.isEmpty()){
+                        return true;
                     }
-
-                    /**
-                     *                      if (rs.next()) {
-                     *                         data.add(new NhanVien(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8)));
-                     *
-                     *                     }
-                     *                     dong if nay bi thieu, cau truy van load ra duoc nhieu dong data, nhung chi lay
-                     *                     duoc dong data dau tien, cac ban sua lai cho dung,
-                     *                     recommend su dung vong lap while, do .. while
-                     */
-
-                    table_info.setItems(data);
-                }catch (SQLException ex){
-                    Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
-                }
-        }
-
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    if (nhanvien.getManv().contains(newValue)) {
+                        return true;
+                    }else if(nhanvien.getTennv().toLowerCase().contains(lowerCaseFilter)){
+                        return true;
+                    }else if(nhanvien.getMacv().toLowerCase().contains(lowerCaseFilter)){
+                        return  true;
+                    }
+                    return false;
+                });
+            }));
+            SortedList<NhanVien> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(table_info.comparatorProperty());
+            table_info.setItems(sortedData);
         });
     }
 
-    public void handleExitNhanVien(ActionEvent event) {
-        Stage stage = (Stage) btn_thoat.getScene().getWindow();
+    public void handleExitNhanVien(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("../fxml/trangchu.fxml"));
+        Stage stage =   (Stage) anchorpane.getScene().getWindow();
         stage.close();
     }
+    private boolean validateMobileNo(){
+        Pattern p = Pattern.compile("(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})");
+        Matcher m = p.matcher(txt_sdt.getText());
+        if(m.find() && m.group().equals(txt_sdt.getText())){
+            return true;
+        }else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validate Number");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Enter Valid Number");
+            alert.showAndWait();
+            return false;
+        }
+    }
+    private boolean validateFields (){
+        if(txt_manv.getText().isEmpty() | txt_macv.getText().isEmpty() | txt_tennv.getText().isEmpty()
+                | GioiTinh.isEmpty() | txt_dc.getText().isEmpty()
+                | ComboBox_name.getSelectionModel().isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validate Fields");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Enter Into the Fields");
+            alert.showAndWait();
+            return false;
+        }
+        if(dt_ns.getEditor().getText().isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validate Fields");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Enter The Date");
+            alert.showAndWait();
+            return false;
+        }
+        if(!(txt_nam.isSelected() | txt_nu.isSelected())){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validate Fields");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Select One of The male or Female");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+    private boolean validateName(){
+        Pattern p = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher("nguyễn văn A");
+        boolean b = m.find();
+
+        if (b){
+            System.out.println("chuỗi có ký tự đặc biệt");
+        }else{
+            System.out.println("ok");
+        }
+        return false;
+    }
+
+    private boolean validateDate(){
+        //Pattern p = Pattern.compile("(\\{d4})/(0?[1-9]|1[012])/(0?[1-9]|[12][0-9])");
+        Pattern p = Pattern.compile("(0?[1-9]|1[012])/(0?[1-9]|[12][0-9])/(\\{d4})");
+       // Pattern p = Pattern.compile("(0?[1-9]|[12][0-9])/(0?[1-9]|1[012])/(\\{d4})");
+        Matcher m = p.matcher(dt_ns.getEditor().getText());
+        if(m.find() && m.group().equals(dt_ns.getEditor().getText())){
+            return true;
+        }else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validate Number");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Enter Valid Date");
+            alert.showAndWait();
+            return false;
+        }
+    }
+    private boolean validatePass(){
+        if( txt_manv.getText().length() < 5){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validate Fields");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Enter Into the MACV < 5");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+
     /*public void checkbox(ActionEvent event){
         if(txt_nam.isSelected()){
             String gt = txt_nam.getText();

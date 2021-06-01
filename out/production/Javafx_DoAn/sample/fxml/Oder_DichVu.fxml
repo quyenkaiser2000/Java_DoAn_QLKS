@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="anchorpane" prefHeight="481.0" prefWidth="721.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.Controller_OderDichVu">
+   <children>
+      <TableView fx:id="table_info" layoutY="-3.0" prefHeight="415.0" prefWidth="438.0">
+        <columns>
+          <TableColumn fx:id="col_tendv" prefWidth="132.00000303983688" text="Tên Dịch Vụ" />
+          <TableColumn fx:id="col_dvt" prefWidth="91.20001220703125" text="Đơn Vị Tính" />
+            <TableColumn fx:id="col_sl" prefWidth="78.39994812011719" text="Số Lượng" />
+            <TableColumn fx:id="col_dg" prefWidth="137.59991455078125" text="Đơn Giá" />
+        </columns>
+      </TableView>
+      <TextField fx:id="txt_sl" layoutX="471.0" layoutY="273.0" onMouseEntered="#tinhtien" prefHeight="26.0" prefWidth="189.0" />
+      <ComboBox fx:id="combobox_tendv" layoutX="472.0" layoutY="198.0" prefHeight="26.0" prefWidth="190.0" />
+      <Label layoutX="472.0" layoutY="168.0" text="Tên Dịch Vụ">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="471.0" layoutY="244.0" text="Số Lượng">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txt_tongcong" layoutX="506.0" layoutY="355.0" />
+      <Label layoutX="466.0" layoutY="320.0" text="Tổng Cộng">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="45.0" fitWidth="51.0" layoutX="455.0" layoutY="344.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/bill.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="btn_add" layoutX="455.0" layoutY="413.0" mnemonicParsing="false" onAction="#handleAdd" prefHeight="37.0" prefWidth="76.0" text="Thêm" />
+      <Button fx:id="btn_exit" layoutX="631.0" layoutY="413.0" mnemonicParsing="false" onAction="#handleExitOderDV" prefHeight="37.0" prefWidth="76.0" text="Hủy" />
+      <Label layoutX="469.0" layoutY="93.0" text="Mã Thuê Phòng">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="lable_matp" layoutX="472.0" layoutY="127.0" prefHeight="27.0" prefWidth="96.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="469.0" layoutY="14.0" text="Mã Hóa Đơn">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="lable_mahd" layoutX="472.0" layoutY="48.0" prefHeight="27.0" prefWidth="96.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

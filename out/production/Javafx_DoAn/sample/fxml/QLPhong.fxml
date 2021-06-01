@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3482C6;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.Controller_QLPhong">
+<AnchorPane fx:id="anchorpane" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3482C6;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.Controller_QLPhong">
     <children>
         <ImageView fitHeight="150.0" fitWidth="336.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -32,17 +38,17 @@
         </AnchorPane>
         <AnchorPane layoutX="1150.0" layoutY="170.0" prefHeight="910.0" prefWidth="759.0" style="-fx-background-color: white;">
             <children>
-                <Label layoutX="55.0" layoutY="94.0" prefHeight="35.0" prefWidth="173.0" text="Loại phòng">
+                <Label layoutX="48.0" layoutY="154.0" prefHeight="35.0" prefWidth="173.0" text="Loại phòng">
                     <font>
                         <Font size="24.0" />
                     </font>
                 </Label>
-                <Label layoutX="48.0" layoutY="221.0" prefHeight="35.0" prefWidth="198.0" text="Tình trạng phòng">
+                <Label layoutX="41.0" layoutY="251.0" prefHeight="35.0" prefWidth="198.0" text="Tình trạng phòng">
                     <font>
                         <Font size="24.0" />
                     </font>
                 </Label>
-                <Button layoutX="50.0" layoutY="386.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="149.0" text="Thêm">
+                <Button fx:id="add" layoutX="50.0" layoutY="386.0" mnemonicParsing="false" onAction="#handleAddPhong" prefHeight="59.0" prefWidth="149.0" text="Thêm">
                     <font>
                         <Font size="24.0" />
                     </font>
@@ -54,19 +60,19 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button layoutX="317.0" layoutY="387.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="150.0" text="Xóa">
+                <Button fx:id="btn_exit" layoutX="522.0" layoutY="386.0" mnemonicParsing="false" onAction="#handleExitPhong" prefHeight="59.0" prefWidth="150.0" text="Thoát">
                     <font>
                         <Font size="24.0" />
                     </font>
                     <graphic>
                         <ImageView fitHeight="40.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@images/delete.png" />
+                                <Image url="@images/exit.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button layoutX="569.0" layoutY="387.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="150.0" text="Sửa">
+                <Button fx:id="btn_update" layoutX="295.0" layoutY="386.0" mnemonicParsing="false" onAction="#handleUpdatePhong" prefHeight="59.0" prefWidth="150.0" text="Sửa">
                     <font>
                         <Font size="24.0" />
                     </font>
@@ -90,9 +96,20 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <TextField layoutX="425.0" layoutY="9.0" prefHeight="35.0" prefWidth="198.0" promptText="Search" />
-            <ComboBox layoutX="275.0" layoutY="210.0" prefHeight="48.0" prefWidth="276.0" />
-            <ComboBox layoutX="275.0" layoutY="88.0" prefHeight="48.0" prefWidth="276.0" />
+                <TextField fx:id="txt_search" layoutX="425.0" layoutY="9.0" prefHeight="35.0" prefWidth="198.0" promptText="Search" />
+            <ComboBox fx:id="combobox_tinhtrangphong" layoutX="268.0" layoutY="240.0" prefHeight="48.0" prefWidth="276.0" />
+            <ComboBox fx:id="combobox_loaiphong" layoutX="268.0" layoutY="148.0" prefHeight="48.0" prefWidth="276.0" />
+            <Label layoutX="48.0" layoutY="77.0" prefHeight="35.0" prefWidth="173.0" text="Mã Phòng">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txt_maphong" layoutX="268.0" layoutY="65.0" prefHeight="48.0" prefWidth="276.0" />
+            <Label fx:id="error_map" layoutX="563.0" layoutY="69.0" prefHeight="35.0" prefWidth="123.0" textFill="RED">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
             </children>
         </AnchorPane>
     </children>

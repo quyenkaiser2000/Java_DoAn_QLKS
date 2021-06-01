@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -19,18 +21,25 @@
       <RowConstraints />
    </rowConstraints>
    <children>
-      <AnchorPane prefHeight="1000.0" prefWidth="1920.0" style="-fx-background-color: #34495e;">
+      <AnchorPane fx:id="anchorpane" prefHeight="1000.0" prefWidth="1920.0" style="-fx-background-color: #34495e;">
          <children>
-            <Pane layoutX="696.0" layoutY="268.0" prefHeight="463.0" prefWidth="528.0" style="-fx-background-color: #191919; -fx-translate-x: 50%; -fx-translate-y: 50%; -fx-border-color: #3498db;">
+            <Pane layoutX="703.0" layoutY="268.0" prefHeight="463.0" prefWidth="521.0" style="-fx-background-color: #191919; -fx-translate-x: 50%; -fx-translate-y: 50%; -fx-border-color: #3498db;">
                <children>
                   <Label layoutX="198.0" layoutY="70.0" style="-fx-font-family: Monospace;" text="LOGIN" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="44.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txt_username" alignment="CENTER" layoutX="137.0" layoutY="162.0" prefHeight="62.0" prefWidth="255.0" promptText="UserName" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none;" styleClass="login" stylesheets="@style.css" />
+                  <TextField fx:id="txt_username" alignment="CENTER" layoutX="137.0" layoutY="145.0" prefHeight="62.0" prefWidth="255.0" promptText="UserName" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none; -fx-text-fill: white;" styleClass="login" stylesheets="@style.css" />
                   <Button fx:id="btn_login" layoutX="208.0" layoutY="326.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="52.0" prefWidth="113.0" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none;" text="Đăng nhập" textFill="WHITE" />
-                  <PasswordField fx:id="txt_password" alignment="CENTER" layoutX="137.0" layoutY="235.0" prefHeight="62.0" prefWidth="255.0" promptText="Password" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none;" styleClass="login" stylesheets="@style.css" />
+                  <PasswordField fx:id="txt_password" alignment="CENTER" layoutX="137.0" layoutY="235.0" prefHeight="62.0" prefWidth="255.0" promptText="Password" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none; -fx-text-fill: white;" styleClass="login" stylesheets="@style.css" />
+                  <Label fx:id="error_username" alignment="CENTER" layoutX="170.0" layoutY="207.0" prefHeight="17.0" prefWidth="187.0" textAlignment="CENTER" textFill="RED" />
+                  <Label fx:id="error_password" alignment="CENTER" layoutX="170.0" layoutY="297.0" prefHeight="17.0" prefWidth="187.0" textFill="RED" />
+                  <ImageView disable="true" fitHeight="1080.0" fitWidth="1920.0" layoutX="-702.0" layoutY="-272.0" opacity="0.2" pickOnBounds="true" smooth="false">
+                     <image>
+                        <Image url="@images/0e3cff93ade3fbd7f6f68593fc86c3fe.jpg" />
+                     </image>
+                  </ImageView>
                </children>
             </Pane>
          </children></AnchorPane>

@@ -2,8 +2,6 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3482C6;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.Controller">
+<AnchorPane fx:id="anchorpane" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3482C6;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller.Controller_ThuePhong">
    <children>
       <ImageView fitHeight="150.0" fitWidth="336.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -27,24 +25,24 @@
       </Label>
       <AnchorPane layoutY="170.0" prefHeight="910.0" prefWidth="1162.0" style="-fx-background-color: white;">
          <children>
-            <TableView prefHeight="910.0" prefWidth="1162.0">
+            <TableView fx:id="table_infor" prefHeight="910.0" prefWidth="1162.0">
               <columns>
-                <TableColumn prefWidth="272.0000427365303" text="Mã thuê phòng" />
-                <TableColumn prefWidth="213.5999755859375" text="Mã nhân viên" />
-                  <TableColumn minWidth="0.0" prefWidth="349.5999755859375" text="Tên khách hàng" />
-                  <TableColumn prefWidth="331.99993896484375" text="Ngày lập" />
+                <TableColumn fx:id="col_matp" prefWidth="272.0000427365303" text="Mã thuê phòng" />
+                <TableColumn fx:id="col_manv" prefWidth="213.5999755859375" text="Mã nhân viên" />
+                  <TableColumn fx:id="col_tenkh" minWidth="0.0" prefWidth="349.5999755859375" text="Tên khách hàng" />
+                  <TableColumn fx:id="col_ngaylap" prefWidth="331.99993896484375" text="Ngày lập" />
               </columns>
             </TableView>
          </children>
       </AnchorPane>
       <AnchorPane layoutX="1150.0" layoutY="170.0" prefHeight="910.0" prefWidth="759.0" style="-fx-background-color: white;">
          <children>
-            <Label layoutX="55.0" layoutY="88.0" prefHeight="35.0" prefWidth="174.0" text="Tên khách hàng">
+            <Label layoutX="60.0" layoutY="321.0" prefHeight="35.0" prefWidth="174.0" text="Tên khách hàng">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Button layoutX="55.0" layoutY="824.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="149.0" text="Thêm">
+            <Button fx:id="btn_add" layoutX="55.0" layoutY="770.0" mnemonicParsing="false" onAction="#handleAddThuePhong" prefHeight="59.0" prefWidth="149.0" text="Thêm">
                <font>
                   <Font size="24.0" />
                </font>
@@ -56,7 +54,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="309.0" layoutY="824.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="150.0" text="Sửa">
+            <Button fx:id="btn_update" layoutX="309.0" layoutY="770.0" mnemonicParsing="false" onAction="#handleUpdateThuePhong" prefHeight="59.0" prefWidth="150.0" text="Sửa">
                <font>
                   <Font size="24.0" />
                </font>
@@ -68,7 +66,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <TextField layoutX="289.0" layoutY="80.0" prefHeight="50.0" prefWidth="344.0" />
+            <TextField fx:id="txt_tenkh" layoutX="294.0" layoutY="313.0" prefHeight="50.0" prefWidth="344.0" />
             <Button layoutX="631.0" layoutY="9.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="138.0" text="Tìm kiếm">
                <font>
                   <Font size="14.0" />
@@ -82,57 +80,83 @@
                </graphic>
             </Button>
             <TextField layoutX="425.0" layoutY="9.0" prefHeight="35.0" prefWidth="198.0" promptText="Search" />
-            <Button layoutX="55.0" layoutY="714.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="150.0" text="Thêm DV">
+            <Button fx:id="btn_addDV" layoutX="447.0" layoutY="686.0" mnemonicParsing="false" onAction="#handleAddDV" prefHeight="59.0" prefWidth="150.0" text="Thêm DV">
                <font>
                   <Font size="24.0" />
                </font>
             </Button>
-            <Label layoutX="52.0" layoutY="230.0" prefHeight="35.0" prefWidth="174.0" text="CMND">
+            <Label layoutX="57.0" layoutY="463.0" prefHeight="35.0" prefWidth="174.0" text="CMND">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <TextField layoutX="286.0" layoutY="222.0" prefHeight="50.0" prefWidth="344.0" />
-            <Label layoutX="52.0" layoutY="546.0" prefHeight="35.0" prefWidth="174.0" text="Phòng">
+            <TextField fx:id="txt_cmndkh" layoutX="291.0" layoutY="455.0" prefHeight="50.0" prefWidth="344.0" />
+            <Label layoutX="60.0" layoutY="397.0" prefHeight="35.0" prefWidth="174.0" text="Giới tính">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <ComboBox layoutX="286.0" layoutY="538.0" prefHeight="50.0" prefWidth="150.0" />
-            <Label layoutX="55.0" layoutY="164.0" prefHeight="35.0" prefWidth="174.0" text="Giới tính">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <CheckBox layoutX="289.0" layoutY="156.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="104.0" text="Nam">
+            <CheckBox fx:id="cb_nam" layoutX="294.0" layoutY="389.0" mnemonicParsing="false" onAction="#male" prefHeight="50.0" prefWidth="104.0" text="Nam">
                <font>
                   <Font size="24.0" />
                </font>
             </CheckBox>
-            <CheckBox layoutX="439.0" layoutY="156.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="104.0" text="Nữ">
+            <CheckBox fx:id="cb_nu" layoutX="444.0" layoutY="389.0" mnemonicParsing="false" onAction="#female" prefHeight="50.0" prefWidth="104.0" text="Nữ">
                <font>
                   <Font size="24.0" />
                </font>
             </CheckBox>
-            <Label layoutX="52.0" layoutY="304.0" prefHeight="35.0" prefWidth="174.0" text="Ngày sinh">
+            <Label layoutX="55.0" layoutY="546.0" prefHeight="35.0" prefWidth="174.0" text="Địa chỉ">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <DatePicker layoutX="286.0" layoutY="304.0" prefHeight="50.0" prefWidth="344.0" />
-            <Label layoutX="52.0" layoutY="389.0" prefHeight="35.0" prefWidth="174.0" text="Địa chỉ">
+            <TextField fx:id="txt_dckh" layoutX="291.0" layoutY="542.0" prefHeight="50.0" prefWidth="344.0" />
+            <Label layoutX="55.0" layoutY="620.0" prefHeight="35.0" prefWidth="174.0" text="SĐT">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <TextField layoutX="286.0" layoutY="381.0" prefHeight="50.0" prefWidth="344.0" />
-            <Label layoutX="52.0" layoutY="463.0" prefHeight="35.0" prefWidth="174.0" text="SĐT">
+            <TextField fx:id="txt_sdtkh" layoutX="289.0" layoutY="612.0" prefHeight="50.0" prefWidth="344.0" />
+            <Label layoutX="57.0" layoutY="241.0" prefHeight="35.0" prefWidth="174.0" text="Mã khách hàng">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <TextField layoutX="286.0" layoutY="455.0" prefHeight="50.0" prefWidth="344.0" />
+            <TextField fx:id="txt_makh" layoutX="291.0" layoutY="233.0" prefHeight="50.0" prefWidth="344.0" />
+            <Button fx:id="btn_exit" layoutX="548.0" layoutY="770.0" mnemonicParsing="false" onAction="#handleExitThuePhong" prefHeight="59.0" prefWidth="150.0" text="Thoát">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="38.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/edit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <TextField fx:id="txt_maphong" layoutX="232.0" layoutY="690.0" prefHeight="50.0" prefWidth="150.0" />
+            <Button fx:id="btn_ChonPhong" layoutX="55.0" layoutY="685.0" mnemonicParsing="false" onAction="#handleChonPhong" prefHeight="59.0" prefWidth="174.0" text="Chọn Phòng">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <Label layoutX="55.0" layoutY="161.0" prefHeight="35.0" prefWidth="174.0" text="Mã thuê phòng">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txt_matp" layoutX="289.0" layoutY="153.0" prefHeight="50.0" prefWidth="344.0" />
+            <Label fx:id="txt_manv" layoutX="191.0" layoutY="27.0" prefHeight="28.0" prefWidth="96.0" textFill="WHITE" />
+            <Label layoutX="55.0" layoutY="77.0" prefHeight="35.0" prefWidth="174.0" text="Tên Nhân Viên">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txt_mnv" disable="true" layoutX="289.0" layoutY="69.0" prefHeight="50.0" prefWidth="344.0" />
          </children>
       </AnchorPane>
+      <Label fx:id="lable_test" layoutX="1749.0" layoutY="102.0" prefHeight="37.0" prefWidth="121.0" />
    </children>
 </AnchorPane>

@@ -1,14 +1,13 @@
 package sample.model;
 
 public class QLPhong {
-    String map, tlp, dg, ttp,gc;
+    String map, tlp, dg, ttp;
 
-    public QLPhong(String map) {
+    public QLPhong(String map, String tlp, String dg, String ttp) {
         this.map = map;
         this.tlp = tlp;
         this.dg = dg;
         this.ttp = ttp;
-        this.gc = gc;
     }
 
     public String getMap() {
@@ -43,12 +42,5 @@ public class QLPhong {
         this.ttp = ttp;
     }
 
-    public String getGc() {
-        return gc;
-    }
-
-    public void setGc(String gc) {
-        this.gc = gc;
-    }
 }
 

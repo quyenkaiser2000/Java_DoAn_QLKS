@@ -2,9 +2,9 @@ package sample.model;
 
 
 public class NhanVien {
-    String manv, macv, tennv, ns,gt,dc,sdt,cv;
+    String manv, macv, tennv, ns,gt,dc,sdt;
 
-    public NhanVien(String manv, String macv, String tennv, String ns, String gt, String dc, String sdt, String cv) {
+    public NhanVien(String manv, String macv, String tennv, String ns, String gt, String dc, String sdt) {
         this.manv = manv;
         this.macv = macv;
         this.tennv = tennv;
@@ -12,9 +12,6 @@ public class NhanVien {
         this.gt = gt;
         this.dc = dc;
         this.sdt = sdt;
-        this.cv = cv;
-
-
     }
 
     public String getManv() {
@@ -71,14 +68,6 @@ public class NhanVien {
 
     public void setSdt(String sdt) {
         this.sdt = sdt;
-    }
-
-    public String getCv() {
-        return cv;
-    }
-
-    public void setCv(String cv) {
-        this.cv = cv;
     }
 }
 

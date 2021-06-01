@@ -2,29 +2,40 @@ package sample.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
+import javafx.print.Printer;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import sample.Dialog.AlertDialog;
 import sample.model.ChucVu;
 import sample.model.DichVu;
+import sample.model.NhanVien;
 import sample.model.QLPhong;
 
+import javax.swing.*;
+import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Controller_DichVu implements Initializable{
 
@@ -32,37 +43,25 @@ public class Controller_DichVu implements Initializable{
     private PreparedStatement pst = null;
     private ResultSet rs = null;
     private ObservableList<DichVu> data;
-    private ObservableList<ChucVu> cv;
 
     @FXML
-    private TextField txt_manv;
+    private TextField txt_madv;
+
 
     @FXML
-    private Button btn_add;
+    private TextField txt_tendv;
 
     @FXML
-    private TextField txt_macv;
-
-    @FXML
-    private TextField txt_tennv;
-
-    @FXML
-    private DatePicker dt_ns;
-
-    @FXML
-    private TextField txt_dc;
-
-    @FXML
-    private TextField txt_sdt;
+    private TextField txt_dg;
 
     @FXML
     private ComboBox<String> ComboBox_dvt;
-
     @FXML
-    private CheckBox txt_nam;
-
+    private TextField txt_search;
     @FXML
-    private CheckBox txt_nu;
+    private Button btn_exit;
+    @FXML
+    private AnchorPane anchorpane;
 
 
 
@@ -84,10 +83,11 @@ public class Controller_DichVu implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         con = sample.DBConnection.qlksConnection();
         data = FXCollections.observableArrayList();
-        cv = FXCollections.observableArrayList();
         setCellTable();
         LoadDataTableView();
-        //loadCBCV();
+        loadCBDVT();
+        search_DichVu();
+        setcellvalueformtableview();
     }
 
     private void setCellTable(){
@@ -100,7 +100,7 @@ public class Controller_DichVu implements Initializable{
 
     private void LoadDataTableView(){
         try{
-            pst = con.prepareStatement("SELECT * FROM DICH_VU");
+            pst = con.prepareStatement("SELECT * FROM DICH_VU WHERE Status = N'True'");
             rs = pst.executeQuery();
             while(rs.next()){
                 data.add(new DichVu(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)));
@@ -113,10 +113,19 @@ public class Controller_DichVu implements Initializable{
         table_info.setItems(data);
 
     }
+    private void setcellvalueformtableview() {
+        table_info.setOnMouseClicked(e -> {
+            DichVu p1 = table_info.getItems().get(table_info.getSelectionModel().getFocusedIndex());
+            txt_madv.setText(p1.getMadv());
+            txt_tendv.setText(p1.getTendv());
+            txt_dg.setText(p1.getDg());
+            ComboBox_dvt.setValue(p1.getDvt());
+        });
+    }
     private void loadCBDVT(){
         try{
             List<String> options = new ArrayList<>();
-            pst = con.prepareStatement("SELECT * FROM DICH_VU");
+            pst = con.prepareStatement("SELECT DISTINCT DonViTinh FROM DICH_VU");
             rs = pst.executeQuery();
             while(rs.next()){
                 String name = rs.getString("DonViTinh");
@@ -129,42 +138,155 @@ public class Controller_DichVu implements Initializable{
         }
 
     }
-    private void handleAddNhanVien(ActionEvent event) throws SQLException {
-        String sql = "Insert Into NHAN_VIEN(MaNhanVien, MaChucVu, HoTen, NgaySinh, GioiTinh, DiaChi, SoDienThoai, ChucVu) Values(?,?,?,?,?,?,?,?)";
-        String manv = txt_manv.getText();
-        String macv = txt_macv.getText();
-        String tennv = txt_tennv.getText();
-        String ns = dt_ns.getValue().toString();
-        if(txt_nam.isSelected()){
-            String gt =txt_nam.getText();
-        }
-        if(txt_nu.isSelected()){
-            String gt =txt_nu.getText();
-        }
-        String dc = txt_dc.getText();
-        String sdt = txt_sdt.getText();
-        /*String cv = txt_cv.getText();*/
-        try {
-            pst = con.prepareStatement(sql);
-            pst.setString(1,manv);
-            pst.setString(2,macv);
-            pst.setString(3,tennv);
-            pst.setString(4,ns);
-            //pst.setString(5,);
-            pst.setString(6,dc);
-            pst.setString(7,sdt);
-            //pst.setString(1,manv);
-            int i = pst.executeUpdate();
-            if(i==1){
-                System.out.println("Data Insert Successfully");
+    private void cleardata() {
+        txt_madv.clear();
+        txt_dg.clear();
+        txt_tendv.clear();
+        ComboBox_dvt.setPromptText("");
+    }
+    private void search_DichVu(){
+        txt_search.setOnKeyReleased(e->{
+            if(txt_search.getText().equals(""))    {
+                LoadDataTableView();
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE,null,ex);
-        }
-        finally {
-            pst.close();
+            else{
+                data.clear();
+                String sql = "select *   from DICH_VU where MaDichVu LIKE N'%"+txt_search.getText()+"%'"
+                        + "UNION Select *   from DICH_VU where TenDichVu LIKE N'%"+txt_search.getText()+"%'" ;
+                try{
+                    pst = con.prepareStatement(sql);
+                    rs= pst.executeQuery();
+                    while(rs.next()) {
+                        data.add(new DichVu(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)));
+                    }
+
+                    table_info.setItems(data);
+                }catch (SQLException ex){
+                    Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        });
+    }
+
+    public void handleAddDichVu(ActionEvent event) throws SQLException {
+        String sql = "Insert Into DICH_VU(MaDichVu, TenDichVu, DonViTinh, DonGia,Status) Values(?,?,?,?,?)";
+        String madv = txt_madv.getText();
+        String tendv = txt_tendv.getText();
+        Double dg = Double.valueOf(txt_dg.getText());
+        String dvt = ComboBox_dvt.getValue();
+        if(validateFields()){
+            try {
+                pst = con.prepareStatement(sql);
+                pst.setString(1,madv);
+                pst.setString(2,tendv);
+                pst.setString(3,dvt);
+                pst.setString(4,"True");
+                pst.setDouble(5,dg);
+                int i = pst.executeUpdate();
+                if(i==1){
+                    System.out.println("Data Insert Successfully");
+                    AlertDialog.display("Thông báo","Thêm thành công");
+                    data.clear();
+                    LoadDataTableView();
+                    cleardata();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE,null,ex);
+            }
+            finally {
+                pst.close();
+            }
         }
     }
+
+    public void handleDeleteDichVu(ActionEvent event) {
+        String sql = "Update DICH_VU  set Status = ? WHERE MaDichVu = ? ";
+        try {
+            String madv = txt_madv.getText();
+            pst = con.prepareStatement(sql);
+            pst.setString(1,"false");
+            pst.setString(2, madv);
+            int i = pst.executeUpdate();
+            if (i == 1) {
+                System.out.println("Data Update Successfully");
+                data.clear();
+                LoadDataTableView();
+                AlertDialog.display("Thông báo","Xóa thành công");
+                //done - them mot cai nua la khi update thanh cong, update lai tableview de hien thi data nhan vien
+
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void handleUpdateDichVu(ActionEvent event) {
+        String sql = "Update DICH_VU  set TenDichVu = ?, DonViTinh = ?, DonGia = ? WHERE MaDichVu = ? ";
+        try {
+            String tendv = txt_tendv.getText();
+            String madv = txt_madv.getText();
+            String dg = txt_dg.getText();
+            String dvt = ComboBox_dvt.getValue();
+
+            pst = con.prepareStatement(sql);
+
+
+            pst.setString(1,tendv);
+            pst.setString(2, dvt);
+            pst.setString(3, dg);
+            pst.setString(4, madv);
+            int i = pst.executeUpdate();
+            if (i == 1) {
+                System.out.println("Data Update Successfully");
+                data.clear();
+                LoadDataTableView();
+                AlertDialog.display("Thông báo","Update thành công");
+                //done - them mot cai nua la khi update thanh cong, update lai tableview de hien thi data nhan vien
+
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void Exit(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("../fxml/trangchu.fxml"));
+        Stage stage =   (Stage) anchorpane.getScene().getWindow();
+        stage.close();
+    }
+
+    public void handleInDichVu(ActionEvent event) {
+        MessageFormat header = new MessageFormat("IN DANH SACH DICH VU");
+        MessageFormat footer = new MessageFormat("Page {0, number , integer}");
+
+        Printer myPrinter;
+        ObservableSet<Printer> printers = Printer.getAllPrinters();
+        for(Printer printer : printers){
+            if(printer.getName().matches("spefic printer name")){
+                myPrinter = printer;
+            }
+        }
+
+    }
+
+
+    private boolean validateFields (){
+        if(txt_madv.getText().isEmpty() | txt_tendv.getText().isEmpty() | ComboBox_dvt.getSelectionModel().isEmpty()
+        | txt_dg.getText().isEmpty() | txt_dg.getText().isEmpty())
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validate Fields");
+            alert.setHeaderText(null);
+            alert.setContentText("Please Enter Into the Fields");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
+
+
     /*public void checkbox(ActionEvent event){
         if(txt_nam.isSelected()){
             String gt = txt_nam.getText();
