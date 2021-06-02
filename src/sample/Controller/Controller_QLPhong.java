@@ -127,7 +127,7 @@ public class Controller_QLPhong implements Initializable{
             combobox_loaiphong.setItems(FXCollections.observableArrayList(options));
 
         } catch (SQLException ex) {
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -164,23 +164,25 @@ public class Controller_QLPhong implements Initializable{
     private void search_QLPhong(){
         txt_search.setOnKeyReleased(e->{
             if(txt_search.getText().equals(""))    {
+                data.clear();
                 LoadDataTableView();
             }
             else{
                 data.clear();
                 String sql = "SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong AND MaPhong LIKE N'%"+txt_search.getText()+"%'"
-                        +"UNION SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong AND TenLoaiPhong LIKE N'%"+txt_search.getText()+"%'";
+                        +"UNION SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong AND TenLoaiPhong LIKE N'%"+txt_search.getText()+"%'"
+                        +"UNION SELECT * FROM PHONG A, LOAI_PHONG B, LOAI_TINH_TRANG C WHERE A.MaLoaiPhong=B.MaLoaiPhong And A.MaLoaiTinhTrangPhong = C.MaLoaiTinhTrangPhong AND TenLoaiTinhTrangPhong LIKE N'%"+txt_search.getText()+"%'";
                 try{
                     pst = con.prepareStatement(sql);
                     rs= pst.executeQuery();
                     while(rs.next()) {
-                        data.add(new QLPhong(rs.getString(1),rs.getString(6),rs.getString(8),rs.getString(11)));
+                        data.add(new QLPhong(rs.getString(1),rs.getString(6),rs.getString(7),rs.getString(9)));
 
                     }
 
                     table_info.setItems(data);
                 }catch (SQLException ex){
-                    Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -203,9 +205,11 @@ public class Controller_QLPhong implements Initializable{
             String mp = txt_maphong.getText();
             String malp = null;
             String mattlp = null;
+
             String mlp = "select MaLoaiPhong from LOAI_PHONG where TenLoaiPhong LIKE N'%" + combobox_loaiphong.getValue() + "%'";
 
             String mlttp = "select MaLoaiTinhTrangPhong from LOAI_TINH_TRANG where TenLoaiTinhTrangPhong LIKE N'%" + combobox_tinhtrangphong.getValue() + "%'";
+
             try {
                 pst = con.prepareStatement(mlp);
                 rs = pst.executeQuery();
@@ -213,7 +217,7 @@ public class Controller_QLPhong implements Initializable{
                     malp = rs.getString(1);
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {
                 pst = con.prepareStatement(mlttp);
@@ -223,7 +227,7 @@ public class Controller_QLPhong implements Initializable{
                 }
 
             } catch (SQLException ex) {
-                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {
                 pst = con.prepareStatement(sql);
@@ -266,7 +270,7 @@ public class Controller_QLPhong implements Initializable{
                 malp = rs.getString(1);
             }
         }catch (SQLException ex){
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
         }
         try{
             pst = con.prepareStatement(mlttp);
@@ -276,7 +280,7 @@ public class Controller_QLPhong implements Initializable{
             }
 
         }catch (SQLException ex){
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
         }
         try{
             pst = con.prepareStatement(sql);
@@ -293,7 +297,7 @@ public class Controller_QLPhong implements Initializable{
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

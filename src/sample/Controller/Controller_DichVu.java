@@ -143,7 +143,7 @@ public class Controller_DichVu implements Initializable{
 
             ComboBox_dvt.setItems(FXCollections.observableArrayList(options));
         }catch(SQLException ex){
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE,null,ex);
+            Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE,null,ex);
         }
 
     }
@@ -156,12 +156,13 @@ public class Controller_DichVu implements Initializable{
     private void search_DichVu(){
         txt_search.setOnKeyReleased(e->{
             if(txt_search.getText().equals(""))    {
+                data.clear();
                 LoadDataTableView();
             }
             else{
                 data.clear();
-                String sql = "select *   from DICH_VU where MaDichVu LIKE N'%"+txt_search.getText()+"%'"
-                        + "UNION Select *   from DICH_VU where TenDichVu LIKE N'%"+txt_search.getText()+"%'" ;
+                String sql = "select *   from DICH_VU where Status = 'True' AND MaDichVu LIKE N'%"+txt_search.getText()+"%'"
+                        + "UNION Select *   from DICH_VU where Status = 'True' AND TenDichVu LIKE N'%"+txt_search.getText()+"%'" ;
                 try{
                     pst = con.prepareStatement(sql);
                     rs= pst.executeQuery();
@@ -171,7 +172,7 @@ public class Controller_DichVu implements Initializable{
 
                     table_info.setItems(data);
                 }catch (SQLException ex){
-                    Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -230,7 +231,7 @@ public class Controller_DichVu implements Initializable{
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -260,7 +261,7 @@ public class Controller_DichVu implements Initializable{
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

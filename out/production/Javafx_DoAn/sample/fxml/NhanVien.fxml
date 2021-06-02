@@ -27,7 +27,7 @@
         </Label>
         <AnchorPane layoutY="170.0" prefHeight="910.0" prefWidth="1254.0" style="-fx-background-color: white;">
             <children>
-                <TableView fx:id="table_info" prefHeight="910.0" prefWidth="1254.0">
+                <TableView fx:id="table_info" prefHeight="902.0" prefWidth="1254.0">
                     <columns>
                         <TableColumn fx:id="col_manv" prefWidth="116.79998475313187" text="Mã nhân viên" />
                         <TableColumn fx:id="col_macv" prefWidth="119.99996948242188" text="Mã Chức Vụ" />

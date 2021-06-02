@@ -17,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import sample.Dialog.AlertDialog;
+import sample.Validation.Validation_TextField;
 import sample.model.*;
 
 import java.io.IOException;
@@ -92,6 +93,28 @@ public class Controller_ThuePhong implements Initializable {
     private Label lable_test;
     @FXML
     private TextField txt_mnv;
+    @FXML
+    private TextField txt_search;
+    @FXML
+    private Label error_matp;
+
+    @FXML
+    private Label error_makh;
+
+    @FXML
+    private Label error_tenkh;
+
+    @FXML
+    private Label error_cmnd;
+
+    @FXML
+    private Label error_dc;
+
+    @FXML
+    private Label error_sdt;
+
+    @FXML
+    private Label error_phong;
 
 
 
@@ -109,6 +132,7 @@ public class Controller_ThuePhong implements Initializable {
         }
         //loadCBCV();
         setcellvalueformtableview();
+        search_ThuePhong();
         //search_NhanVien();
     }
 
@@ -119,6 +143,33 @@ public class Controller_ThuePhong implements Initializable {
         col_tenkh.setCellValueFactory(new PropertyValueFactory<>("tenkh"));
         col_ngaylap.setCellValueFactory(new PropertyValueFactory<>("ngaylap"));
 
+    }
+    private void search_ThuePhong(){
+        txt_search.setOnKeyReleased(e->{
+            if(txt_search.getText().equals(""))    {
+                data.clear();
+                LoadDataTableView();
+            }
+            else{
+                data.clear();
+                String sql = "SELECT MaThuePhong, MaNhanVien, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B   WHERE A.MaKhachHang = B.MaKhachHang AND MaThuePhong LIKE N'%"+txt_search.getText()+"%'"
+                        +" UNION SELECT MaThuePhong, MaNhanVien, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B   WHERE A.MaKhachHang = B.MaKhachHang AND MaNhanVien LIKE N'%"+txt_search.getText()+"%'"
+                        +" UNION SELECT MaThuePhong, MaNhanVien, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B   WHERE A.MaKhachHang = B.MaKhachHang AND TenKhachHang LIKE N'%"+txt_search.getText()+"%'";
+                try{
+                    pst = con.prepareStatement(sql);
+                    rs= pst.executeQuery();
+                    while(rs.next()) {
+                        data.add(new ThuePhong(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)));
+
+                    }
+
+                    table_infor.setItems(data);
+                }catch (SQLException ex){
+                    Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        });
     }
     private void setcellvalueformtableview() {
         table_infor.setOnMouseClicked(e -> {
@@ -155,7 +206,7 @@ public class Controller_ThuePhong implements Initializable {
 
                 }
             }catch (SQLException ex) {
-                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE, null, ex);
             }
             String map = null;
             String sqlmap = "SELECT MaPhong FROM CHI_TIET_PHIEU_THUE_PHONG WHERE MaThuePhong LIKE N'"+txt_matp.getText()+"'";
@@ -168,7 +219,7 @@ public class Controller_ThuePhong implements Initializable {
 
                 }
             }catch (SQLException ex) {
-                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
 
@@ -183,7 +234,7 @@ public class Controller_ThuePhong implements Initializable {
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE, null, ex);
         }
         table_infor.setItems(data);
 
@@ -266,7 +317,7 @@ public class Controller_ThuePhong implements Initializable {
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -287,95 +338,104 @@ public class Controller_ThuePhong implements Initializable {
         }
     }
     public void handleAddThuePhong(ActionEvent event) {
-        String sqlKH = "Insert Into KHACH_HANG(MaKhachHang,TenKhachHang,GioiTinh,CMND,DiaChi,DienThoai) Values(?,?,?,?,?,?)";
-        String makh = txt_makh.getText();
-        String tenkh = txt_tenkh.getText();
-        String cmnd = txt_cmndkh.getText();
-        String dc = txt_dckh.getText();
-        String sdt = txt_sdtkh.getText();
-        try{
-            pst = con.prepareStatement(sqlKH);
-            pst.setString(1,makh);
-            pst.setString(2,tenkh);
-            pst.setString(3,GioiTinh);
-            pst.setString(4,cmnd);
-            pst.setString(5,dc);
-            pst.setString(6,sdt);
-            int i = pst.executeUpdate();
-            if(i==1){
-                System.out.println("Data Insert Successfully");
-                data.clear();
-                LoadDataTableView();
+        boolean ismatp = Validation_TextField.isTextFieldNotEmpty(txt_matp, error_matp,"Nhập Mã!");
+        boolean ismakh = Validation_TextField.isTextFieldNotEmpty(txt_makh, error_makh,"Nhập Mã!");
+        boolean istenkh = Validation_TextField.isTextFieldNotEmpty(txt_tenkh, error_tenkh,"Nhập Tên!");
+        boolean iscmnd = Validation_TextField.isTextFieldNotEmpty(txt_cmndkh, error_cmnd,"Nhập CMND!");
+        boolean isdc = Validation_TextField.isTextFieldNotEmpty(txt_dckh, error_dc,"Nhập ĐC!");
+        boolean issdt = Validation_TextField.isTextFieldNotEmpty(txt_sdtkh, error_sdt,"Nhập SDT!");
+        boolean isphong = Validation_TextField.isTextFieldNotEmpty(txt_maphong, error_phong,"!");
+        if(ismakh && issdt && iscmnd && isdc && ismatp && isphong && istenkh){
+            String sqlKH = "Insert Into KHACH_HANG(MaKhachHang,TenKhachHang,GioiTinh,CMND,DiaChi,DienThoai) Values(?,?,?,?,?,?)";
+            String makh = txt_makh.getText();
+            String tenkh = txt_tenkh.getText();
+            String cmnd = txt_cmndkh.getText();
+            String dc = txt_dckh.getText();
+            String sdt = txt_sdtkh.getText();
+            try{
+                pst = con.prepareStatement(sqlKH);
+                pst.setString(1,makh);
+                pst.setString(2,tenkh);
+                pst.setString(3,GioiTinh);
+                pst.setString(4,cmnd);
+                pst.setString(5,dc);
+                pst.setString(6,sdt);
+                int i = pst.executeUpdate();
+                if(i==1){
+                    System.out.println("Data Insert Successfully");
+                    data.clear();
+                    LoadDataTableView();
+                }
+            }catch (SQLException ex) {
+                Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE,null,ex);
             }
-        }catch (SQLException ex) {
-            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE,null,ex);
-        }
 
-        String manv1 = null;
-        String mlp = "select MaNhanVien from NHAN_VIEN where HoTen LIKE N'%"+txt_mnv.getText()+"%'";
-        try{
-            pst = con.prepareStatement(mlp);
-            rs= pst.executeQuery();
-            if(rs.next()) {
-                manv1 = rs.getString(1);
+            String manv1 = null;
+            String mlp = "select MaNhanVien from NHAN_VIEN where HoTen LIKE N'%"+txt_mnv.getText()+"%'";
+            try{
+                pst = con.prepareStatement(mlp);
+                rs= pst.executeQuery();
+                if(rs.next()) {
+                    manv1 = rs.getString(1);
+                }
+            }catch (SQLException ex){
+                Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }catch (SQLException ex){
-            Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String sqlphieuthue = "Insert Into PHIEU_THUE_PHONG(MaThuePhong,MaNhanVien,MaKhachHang,NgayLap) Values(?,?,?,?)";
-        java.util.Date date=new java.util.Date();
-        String matp1 = txt_matp.getText();
-        String makh1 = txt_makh.getText();
-        LocalDateTime now = LocalDateTime.now();
+            String sqlphieuthue = "Insert Into PHIEU_THUE_PHONG(MaThuePhong,MaNhanVien,MaKhachHang,NgayLap) Values(?,?,?,?)";
+            java.util.Date date=new java.util.Date();
+            String matp1 = txt_matp.getText();
+            String makh1 = txt_makh.getText();
+            LocalDateTime now = LocalDateTime.now();
 
-        try {
+            try {
 
-            pst = con.prepareStatement(sqlphieuthue);
-            pst.setString(1,matp1);
-            pst.setString(2,manv1);
-            pst.setString(3,makh1);
-            pst.setString(4, String.valueOf(now));
+                pst = con.prepareStatement(sqlphieuthue);
+                pst.setString(1,matp1);
+                pst.setString(2,manv1);
+                pst.setString(3,makh1);
+                pst.setString(4, String.valueOf(now));
 
-            int i = pst.executeUpdate();
-            if(i==1){
-                System.out.println("Data Insert Successfully");
-                data.clear();
-                LoadDataTableView();
+                int i = pst.executeUpdate();
+                if(i==1){
+                    System.out.println("Data Insert Successfully");
+                    data.clear();
+                    LoadDataTableView();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE,null,ex);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE,null,ex);
-        }
-        String sqlphieutp = "Insert Into CHI_TIET_PHIEU_THUE_PHONG(MaThuePhong,MaPhong) Values(?,?)";
-        String matp = txt_matp.getText();
-        String map = txt_maphong.getText();
-        try{
-            pst = con.prepareStatement(sqlphieutp);
-            pst.setString(1,matp);
-            pst.setString(2,map);
-            int i = pst.executeUpdate();
-            if(i==1){
-                System.out.println("Data Insert Successfully");
-                data.clear();
-                LoadDataTableView();
+            String sqlphieutp = "Insert Into CHI_TIET_PHIEU_THUE_PHONG(MaThuePhong,MaPhong) Values(?,?)";
+            String matp = txt_matp.getText();
+            String map = txt_maphong.getText();
+            try{
+                pst = con.prepareStatement(sqlphieutp);
+                pst.setString(1,matp);
+                pst.setString(2,map);
+                int i = pst.executeUpdate();
+                if(i==1){
+                    System.out.println("Data Insert Successfully");
+                    data.clear();
+                    LoadDataTableView();
+                }
+            }catch (SQLException ex) {
+                Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE,null,ex);
             }
-        }catch (SQLException ex) {
-            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE,null,ex);
-        }
-        String maphong = txt_maphong.getText();
-        String sql = "Update PHONG  set MaLoaiTinhTrangPhong = ? WHERE MaPhong = ? ";
-        try{
-            pst = con.prepareStatement(sql);
-            pst.setString(1,"TP003");
-            pst.setString(2,maphong);
-            int i = pst.executeUpdate();
-            if(i==1){
-                System.out.println("Data Insert Successfully");
-                AlertDialog.display("Thông báo","Thêm thành công");
-                data.clear();
-                LoadDataTableView();
+            String maphong = txt_maphong.getText();
+            String sql = "Update PHONG  set MaLoaiTinhTrangPhong = ? WHERE MaPhong = ? ";
+            try{
+                pst = con.prepareStatement(sql);
+                pst.setString(1,"TP003");
+                pst.setString(2,maphong);
+                int i = pst.executeUpdate();
+                if(i==1){
+                    System.out.println("Data Insert Successfully");
+                    AlertDialog.display("Thông báo","Thêm thành công");
+                    data.clear();
+                    LoadDataTableView();
+                }
+            }catch (SQLException ex) {
+                Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE,null,ex);
             }
-        }catch (SQLException ex) {
-            Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE,null,ex);
         }
     }
 

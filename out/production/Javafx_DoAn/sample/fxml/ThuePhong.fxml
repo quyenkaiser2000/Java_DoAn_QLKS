@@ -25,7 +25,7 @@
       </Label>
       <AnchorPane layoutY="170.0" prefHeight="910.0" prefWidth="1162.0" style="-fx-background-color: white;">
          <children>
-            <TableView fx:id="table_infor" prefHeight="910.0" prefWidth="1162.0">
+            <TableView fx:id="table_infor" prefHeight="902.0" prefWidth="1162.0">
               <columns>
                 <TableColumn fx:id="col_matp" prefWidth="272.0000427365303" text="Mã thuê phòng" />
                 <TableColumn fx:id="col_manv" prefWidth="213.5999755859375" text="Mã nhân viên" />
@@ -79,7 +79,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <TextField layoutX="425.0" layoutY="9.0" prefHeight="35.0" prefWidth="198.0" promptText="Search" />
+            <TextField fx:id="txt_search" layoutX="425.0" layoutY="9.0" prefHeight="35.0" prefWidth="198.0" promptText="Search" />
             <Button fx:id="btn_addDV" layoutX="447.0" layoutY="686.0" mnemonicParsing="false" onAction="#handleAddDV" prefHeight="59.0" prefWidth="150.0" text="Thêm DV">
                <font>
                   <Font size="24.0" />
@@ -155,6 +155,41 @@
                </font>
             </Label>
             <TextField fx:id="txt_mnv" disable="true" layoutX="289.0" layoutY="69.0" prefHeight="50.0" prefWidth="344.0" />
+            <Label fx:id="error_matp" layoutX="637.0" layoutY="161.0" prefHeight="35.0" prefWidth="122.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_makh" layoutX="637.0" layoutY="241.0" prefHeight="35.0" prefWidth="122.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_tenkh" layoutX="639.0" layoutY="320.0" prefHeight="35.0" prefWidth="122.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_cmnd" layoutX="639.0" layoutY="462.0" prefHeight="35.0" prefWidth="122.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_dc" layoutX="639.0" layoutY="549.0" prefHeight="35.0" prefWidth="122.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_sdt" layoutX="639.0" layoutY="620.0" prefHeight="35.0" prefWidth="122.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="error_phong" layoutX="383.0" layoutY="697.0" prefHeight="35.0" prefWidth="57.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
       <Label fx:id="lable_test" layoutX="1749.0" layoutY="102.0" prefHeight="37.0" prefWidth="121.0" />
