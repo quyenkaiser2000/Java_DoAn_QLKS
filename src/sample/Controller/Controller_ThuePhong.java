@@ -152,9 +152,9 @@ public class Controller_ThuePhong implements Initializable {
             }
             else{
                 data.clear();
-                String sql = "SELECT MaThuePhong, MaNhanVien, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B   WHERE A.MaKhachHang = B.MaKhachHang AND MaThuePhong LIKE N'%"+txt_search.getText()+"%'"
-                        +" UNION SELECT MaThuePhong, MaNhanVien, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B   WHERE A.MaKhachHang = B.MaKhachHang AND MaNhanVien LIKE N'%"+txt_search.getText()+"%'"
-                        +" UNION SELECT MaThuePhong, MaNhanVien, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B   WHERE A.MaKhachHang = B.MaKhachHang AND TenKhachHang LIKE N'%"+txt_search.getText()+"%'";
+                String sql = "SELECT MaThuePhong, HoTen, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B, NHAN_VIEN C  WHERE A.MaKhachHang = B.MaKhachHang AND A.MaNhanVien = C.MaNhanVien AND MaThuePhong LIKE N'%"+txt_search.getText()+"%'"
+                        +" UNION SELECT MaThuePhong, HoTen, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B, NHAN_VIEN C  WHERE A.MaKhachHang = B.MaKhachHang AND A.MaNhanVien = C.MaNhanVien AND Hoten LIKE N'%"+txt_search.getText()+"%'"
+                        +" UNION SELECT MaThuePhong, HoTen, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B, NHAN_VIEN C  WHERE A.MaKhachHang = B.MaKhachHang AND A.MaNhanVien = C.MaNhanVien AND TenKhachHang LIKE N'%"+txt_search.getText()+"%'";
                 try{
                     pst = con.prepareStatement(sql);
                     rs= pst.executeQuery();
@@ -227,7 +227,7 @@ public class Controller_ThuePhong implements Initializable {
     }
     private void LoadDataTableView() {
         try {
-            pst = con.prepareStatement("SELECT MaThuePhong, MaNhanVien, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B   WHERE A.MaKhachHang = B.MaKhachHang");
+            pst = con.prepareStatement("SELECT MaThuePhong, HoTen, TenKhachHang, FORMAT (NgayLap, 'dd/MM/yyyy') FROM PHIEU_THUE_PHONG A, KHACH_HANG B, NHAN_VIEN C  WHERE A.MaKhachHang = B.MaKhachHang AND A.MaNhanVien = C.MaNhanVien");
             rs = pst.executeQuery();
             while (rs.next()) {
                 data.add(new ThuePhong(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)));
@@ -279,7 +279,6 @@ public class Controller_ThuePhong implements Initializable {
         }
     }
     private void cleardata() {
-        txt_makh.clear();
         txt_dckh.clear();
         txt_sdtkh.clear();
         cb_nu.setSelected(false);
@@ -287,6 +286,7 @@ public class Controller_ThuePhong implements Initializable {
         txt_tenkh.clear();
         txt_cmndkh.clear();
         txt_matp.clear();
+        txt_maphong.clear();
     }
     public void handleUpdateThuePhong(ActionEvent event) {
         String sql = "Update KHACH_HANG  set  TenKhachHang = ?, GioiTinh = ?, CMND = ?, DiaChi = ?, DienThoai = ? WHERE MaKhachHang = ? ";
@@ -308,10 +308,11 @@ public class Controller_ThuePhong implements Initializable {
             if (i == 1) {
                 System.out.println("Data Insert Successfully");
                 data.clear();
-
                 LoadDataTableView();
                 cleardata();
                 AlertDialog.display("Thông báo","Update thành công");
+                autoMaKH();
+                autoMaTP();
 
                 //done - them mot cai nua la khi update thanh cong, update lai tableview de hien thi data nhan vien
 
@@ -432,6 +433,9 @@ public class Controller_ThuePhong implements Initializable {
                     AlertDialog.display("Thông báo","Thêm thành công");
                     data.clear();
                     LoadDataTableView();
+                    cleardata();
+                    autoMaTP();
+                    autoMaKH();
                 }
             }catch (SQLException ex) {
                 Logger.getLogger(Controller_ThuePhong.class.getName()).log(Level.SEVERE,null,ex);

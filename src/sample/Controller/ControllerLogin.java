@@ -63,8 +63,8 @@ public class ControllerLogin implements Initializable {
     }
     @FXML
     private void handleLogin(ActionEvent event) throws IOException {
-        boolean isUserName = Validation_TextField.isTextFieldNotEmpty(txt_username, error_username,"Sai UserName kìa !!");
         boolean isPassWord = Validation_TextField.isTextFieldNotEmpty(txt_password, error_password,"Sai PassWord kìa !!");
+        boolean isUserName = Validation_TextField.isTextFieldNotEmpty(txt_username, error_username,"Sai UserName kìa !!");
 
         if(isUserName  && isPassWord) {
             if (txt_username.getText().equals(getUserName()) && txt_password.getText().equals(getPassword())) {
@@ -151,6 +151,14 @@ public class ControllerLogin implements Initializable {
         return password;
     }
 
+    public void handleDoiMatKhau(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("../fxml/changePassword.fxml"));
+        Stage stage =   new Stage();
+        stage.setTitle("Đổi Mật Khẩu");
+        Scene scene =   new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
 }
 
 

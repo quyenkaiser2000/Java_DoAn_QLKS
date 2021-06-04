@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import sample.Dialog.AlertDialog;
 import sample.Validation.Validation_TextField;
 import sample.model.ChucVu;
+import sample.model.DichVu;
 import sample.model.NhanVien;
 
 import java.io.IOException;
@@ -155,7 +156,7 @@ public class Controller_NhanVien implements Initializable {
 
     private void LoadDataTableView() {
         try {
-            pst = con.prepareStatement("SELECT MaNhanVien, MaChucVu, HoTen, FORMAT (NgaySinh, 'dd/MM/yyyy'), GioiTinh, DiaChi, SoDienThoai FROM NHAN_VIEN");
+            pst = con.prepareStatement("SELECT MaNhanVien, B.TenChucVu , HoTen, FORMAT (NgaySinh, 'dd/MM/yyyy'), GioiTinh, DiaChi, SoDienThoai FROM NHAN_VIEN A, CHUC_VU B Where A.MaChucVu=B.MaChucVu");
             rs = pst.executeQuery();
             while (rs.next()) {
                 data.add(new NhanVien(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)));
@@ -209,7 +210,7 @@ public class Controller_NhanVien implements Initializable {
             }
 
             String macv = null;
-            String sqlmakh = "SELECT TenChucVu FROM NHAN_VIEN WHERE MaNhanVien LIKE N'"+txt_manv.getText()+"'";
+            String sqlmakh = "SELECT B.TenChucVu FROM NHAN_VIEN A, CHUC_VU B WHERE A.MaChucVu = B.MaChucVu AND MaNhanVien LIKE N'"+txt_manv.getText()+"'";
             try{
                 pst = con.prepareStatement(sqlmakh);
                 rs= pst.executeQuery();
@@ -392,7 +393,33 @@ public class Controller_NhanVien implements Initializable {
     public void search_NhanVien(ActionEvent event) {
 
     }
-    private void search_NhanVien() {
+    private void search_NhanVien(){
+        txt_search.setOnKeyReleased(e->{
+            if(txt_search.getText().equals(""))    {
+                data.clear();
+                LoadDataTableView();
+            }
+            else{
+                data.clear();
+                String sql = "SELECT MaNhanVien, B.TenChucVu , HoTen, FORMAT (NgaySinh, 'dd/MM/yyyy'), GioiTinh, DiaChi, SoDienThoai FROM NHAN_VIEN A, CHUC_VU B Where A.MaChucVu=B.MaChucVu AND  MaNhanVien LIKE N'%"+txt_search.getText()+"%'"
+                        + " UNION SELECT MaNhanVien, B.TenChucVu , HoTen, FORMAT (NgaySinh, 'dd/MM/yyyy'), GioiTinh, DiaChi, SoDienThoai FROM NHAN_VIEN A, CHUC_VU B Where A.MaChucVu=B.MaChucVu AND  B.TenChucVu LIKE N'%"+txt_search.getText()+"%'"
+                        + "UNION SELECT MaNhanVien, B.TenChucVu , HoTen, FORMAT (NgaySinh, 'dd/MM/yyyy'), GioiTinh, DiaChi, SoDienThoai FROM NHAN_VIEN A, CHUC_VU B Where A.MaChucVu=B.MaChucVu AND  HoTen LIKE N'%"+txt_search.getText()+"%'";
+                try{
+                    pst = con.prepareStatement(sql);
+                    rs= pst.executeQuery();
+                    while(rs.next()) {
+                        data.add(new NhanVien(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)));
+                    }
+
+                    table_info.setItems(data);
+                }catch (SQLException ex){
+                    Logger.getLogger(Controller_NhanVien.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        });
+    }
+    /*private void search_NhanVien() {
         FilteredList<NhanVien> filteredData =  new FilteredList<>(data, e->true);
         txt_search.setOnKeyReleased(e->{
             txt_search.textProperty().addListener(((observable, oldValue, newValue) -> {
@@ -415,7 +442,7 @@ public class Controller_NhanVien implements Initializable {
             sortedData.comparatorProperty().bind(table_info.comparatorProperty());
             table_info.setItems(sortedData);
         });
-    }
+    }*/
 
     public void handleExitNhanVien(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("../fxml/trangchu.fxml"));

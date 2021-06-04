@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import sample.model.ChonPhong;
 import sample.model.Namelogin;
 import sample.model.Oder_DichVu;
+import sample.model.QLPhong;
 
 import java.io.IOException;
 import java.net.URL;
@@ -58,8 +59,6 @@ public class Controller_ChonPhong implements Initializable {
         data = FXCollections.observableArrayList();
         setCellTable();
         LoadDataTableView();
-
-
     }
 
     private void setCellTable() {
@@ -83,6 +82,7 @@ public class Controller_ChonPhong implements Initializable {
         table_info.setItems(data);
 
     }
+
 
     public void handleAddchonphong(ActionEvent event) {
         /*try {

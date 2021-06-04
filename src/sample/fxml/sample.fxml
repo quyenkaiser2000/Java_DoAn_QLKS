@@ -31,15 +31,16 @@
                      </font>
                   </Label>
                   <TextField fx:id="txt_username" alignment="CENTER" layoutX="137.0" layoutY="145.0" prefHeight="62.0" prefWidth="255.0" promptText="UserName" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none; -fx-text-fill: white;" styleClass="login" stylesheets="@style.css" />
-                  <Button fx:id="btn_login" layoutX="208.0" layoutY="326.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="52.0" prefWidth="113.0" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none;" text="Đăng nhập" textFill="WHITE" />
+                  <Button fx:id="btn_login" layoutX="152.0" layoutY="326.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="52.0" prefWidth="113.0" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none;" text="Đăng nhập" textFill="WHITE" />
                   <PasswordField fx:id="txt_password" alignment="CENTER" layoutX="137.0" layoutY="235.0" prefHeight="62.0" prefWidth="255.0" promptText="Password" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none; -fx-text-fill: white;" styleClass="login" stylesheets="@style.css" />
                   <Label fx:id="error_username" alignment="CENTER" layoutX="170.0" layoutY="207.0" prefHeight="17.0" prefWidth="187.0" textAlignment="CENTER" textFill="RED" />
                   <Label fx:id="error_password" alignment="CENTER" layoutX="170.0" layoutY="297.0" prefHeight="17.0" prefWidth="187.0" textFill="RED" />
-                  <ImageView disable="true" fitHeight="1080.0" fitWidth="1920.0" layoutX="-702.0" layoutY="-272.0" opacity="0.2" pickOnBounds="true" smooth="false">
+                  <ImageView disable="true" fitHeight="1006.0" fitWidth="2040.0" layoutX="-821.0" layoutY="-274.0" opacity="0.2" pickOnBounds="true" smooth="false">
                      <image>
                         <Image url="@images/0e3cff93ade3fbd7f6f68593fc86c3fe.jpg" />
                      </image>
                   </ImageView>
+                  <Button fx:id="btn_login1" layoutX="279.0" layoutY="326.0" mnemonicParsing="false" onAction="#handleDoiMatKhau" prefHeight="52.0" prefWidth="113.0" style="-fx-border-color: #3498db; -fx-border-radius: 50px; -fx-background-color: none;" text="Đổi mật khẩu" textFill="WHITE" />
                </children>
             </Pane>
          </children></AnchorPane>

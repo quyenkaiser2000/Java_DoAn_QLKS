@@ -184,12 +184,34 @@ public class Controller_DichVu implements Initializable{
         boolean istendv = Validation_TextField.isTextFieldNotEmpty(txt_tendv, error_tendv,"Nhập Tên!");
         boolean isdg = Validation_TextField.isTextFieldNotEmpty(txt_dg, error_dg,"Nhập DG!");
         if(ismadv && isdg && istendv){
+
+
+            String madichvu = null;
+
+            String sqlmadv = "select MaDichVu from DICH_VU where MaDichVu LIKE N'%" + txt_madv.getText() + "%'";
+
+            try {
+                pst = con.prepareStatement(sqlmadv);
+                rs = pst.executeQuery();
+                if (rs.next()) {
+                    madichvu = rs.getString(1);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_DichVu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
             String sql = "Insert Into DICH_VU(MaDichVu, TenDichVu, DonViTinh, DonGia,Status) Values(?,?,?,?,?)";
             String madv = txt_madv.getText();
             String tendv = txt_tendv.getText();
             String dg = txt_dg.getText();
             String dvt = ComboBox_dvt.getValue();
-
+            if(txt_madv.getText().equals(madichvu))
+            {
+                AlertDialog.display("Thông báo","Đã tồn tại mã");
+            }
+            else
+            {
                 try {
                     pst = con.prepareStatement(sql);
                     pst.setString(1,madv);
@@ -211,6 +233,8 @@ public class Controller_DichVu implements Initializable{
                 finally {
                     pst.close();
                 }
+            }
+
         }
     }
 

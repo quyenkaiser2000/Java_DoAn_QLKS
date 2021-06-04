@@ -201,10 +201,29 @@ public class Controller_QLPhong implements Initializable{
         if(ismaphong) {
             String sql = "Insert Into PHONG(MaPhong,MaLoaiPhong,MaLoaiTinhTrangPhong) Values(?,?,?)";
             //String sql1 = "Insert Into PHONG(MaLoaiPhong) Values(?)";
+
+
+            String map = null;
+
+            String sqlmap = "select MaPhong from PHONG where MaPhong LIKE N'%" + txt_maphong.getText() + "%'";
+
+            try {
+                pst = con.prepareStatement(sqlmap);
+                rs = pst.executeQuery();
+                if (rs.next()) {
+                    map = rs.getString(1);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+
+
+
             // String sql2 = "Insert Into PHONG(MaLoaiTinhTrangPhong) Values(?)";
             String mp = txt_maphong.getText();
-            String malp = null;
-            String mattlp = null;
+            String malp = null;String mattlp = null;
 
             String mlp = "select MaLoaiPhong from LOAI_PHONG where TenLoaiPhong LIKE N'%" + combobox_loaiphong.getValue() + "%'";
 
@@ -219,6 +238,7 @@ public class Controller_QLPhong implements Initializable{
             } catch (SQLException ex) {
                 Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
             }
+
             try {
                 pst = con.prepareStatement(mlttp);
                 rs = pst.executeQuery();
@@ -229,24 +249,30 @@ public class Controller_QLPhong implements Initializable{
             } catch (SQLException ex) {
                 Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
             }
-            try {
-                pst = con.prepareStatement(sql);
-                pst.setString(1, mp);
-                pst.setString(2, malp);
-                pst.setString(3, mattlp);
-                int i = pst.executeUpdate();
-                if (i == 1) {
-                    System.out.println("Data Insert Successfully");
-                    AlertDialog.display("Thông báo", "Thêm thành công");
-                    data.clear();
-                    LoadDataTableView();
-                    autoMaPhong();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
+            if(txt_maphong.getText().equals(map)) {
+                AlertDialog.display("Thông báo","Đã tồn tại mã");
+                autoMaPhong();
             }
-            finally {
-                pst.close();
+            else
+            {
+                try {
+                    pst = con.prepareStatement(sql);
+                    pst.setString(1, mp);
+                    pst.setString(2, malp);
+                    pst.setString(3, mattlp);
+                    int i = pst.executeUpdate();
+                    if (i == 1) {
+                        System.out.println("Data Insert Successfully");
+                        AlertDialog.display("Thông báo", "Thêm thành công");
+                        data.clear();
+                        LoadDataTableView();
+                        autoMaPhong();
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(Controller_QLPhong.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    pst.close();
+                }
             }
         }
 
