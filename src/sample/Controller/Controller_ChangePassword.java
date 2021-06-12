@@ -39,7 +39,7 @@ public class Controller_ChangePassword implements Initializable {
     private TextField txt_manv;
 
     @FXML
-    private TextField txt_password;
+    private PasswordField txt_password;
 
     @FXML
     private TextField txt_username;
